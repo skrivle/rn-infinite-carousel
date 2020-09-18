@@ -8,6 +8,9 @@ import React, {
   useLayoutEffect,
   ReactNode,
   ReactChildren,
+  Ref,
+  useImperativeHandle,
+  forwardRef,
 } from "react";
 import {
   StyleSheet,
@@ -17,6 +20,7 @@ import {
   Dimensions,
   NativeSyntheticEvent,
   NativeScrollEvent,
+  Button,
 } from "react-native";
 
 const sceenWidth = Dimensions.get("window").width;
@@ -72,25 +76,35 @@ function getNewIndex(
   }
 }
 
-function Slider({
+type Api = {
+  next: () => void,
+  prev: () => void
+}
+
+function SliderComponent({
   children,
   width,
   height,
+  onScroll = () => {}
 }: {
   children: ReactNode;
   width: number;
   height: number;
-}) {
+  onScroll?: (index: number) => void
+}, ref: Ref<Api>) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollView = useRef<ScrollView>(null);
   const items = React.Children.toArray(children);
   const totalItems = items.length;
 
-  useLayoutEffect(() => {
-    setTimeout(() => {
-      scrollView.current?.scrollTo({ x: width * 1, animated: false });
-    });
-  }, []);
+  useImperativeHandle(ref, () => ({
+    next: () => {
+      scrollView.current?.scrollToEnd()
+    },
+    prev: () => {
+      scrollView.current?.scrollTo({x: 0})
+    }
+  }))
 
   const onScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const index = event.nativeEvent.contentOffset.x / width;
@@ -102,6 +116,8 @@ function Slider({
 
     setCurrentIndex(newIndex);
     scrollView.current?.scrollTo({ x: width * 1, animated: false });
+
+    onScroll(newIndex)
   };
 
   const prevItem = items[getPrevIndex(currentIndex, totalItems)];
@@ -113,6 +129,7 @@ function Slider({
   return (
     <View style={{ width, height }}>
       <ScrollView
+        contentOffset={{x: width, y: 0}}
         pagingEnabled
         bounces={false}
         ref={scrollView}
@@ -121,8 +138,9 @@ function Slider({
         alwaysBounceHorizontal={false}
         showsHorizontalScrollIndicator={false}
       >
-        {itemsToRender.map((item) => (
+        {itemsToRender.map((item, i) => (
           <View
+            key={i}
             style={{
               width,
               height,
@@ -139,14 +157,29 @@ function Slider({
   );
 }
 
+const Slider = forwardRef(SliderComponent);
+
 export default function App() {
+
+  const [index, setIndex] = useState(0);
+  const slider = useRef<Api>(null);
+
+
+
+
   return (
     <View style={styles.container}>
-      <Slider height={screenHeight-300} width={sceenWidth}>
+      <Text>{index}</Text>
+      <Slider ref={slider} onScroll={i => setIndex(i)} height={screenHeight-300} width={sceenWidth}>
         <Slide color="orange"><Text>1</Text></Slide>
         <Slide color="black"><Text style={{color: 'white'}}>2</Text></Slide>
         <Slide color="yellow"><Text>3</Text></Slide>
+        <Slide color="grey"><Text>4</Text></Slide>
       </Slider>
+      <View style={{flexDirection: 'row'}}>
+        <Button title="prev" onPress={() => slider.current?.prev()}>prev</Button>
+        <Button title="next" onPress={() => slider.current?.next()}>next</Button>
+      </View>
     </View>
   );
 }
