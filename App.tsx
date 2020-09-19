@@ -31,14 +31,8 @@ return <View style={{ justifyContent: 'center', alignItems: 'center', width: sce
 }
 
 function getDirection(index: number): "next" | "prev" | "none" {
-  if (index > 1) {
-    return "next";
-  }
-
-  if (index < 1) {
-    return "prev";
-  }
-
+  if (index > 1) return "next";
+  if (index < 1) return "prev";
   return "none";
 }
 
@@ -46,21 +40,17 @@ function getNextIndex(currIndex: number, length: number): number {
   const maxIndex = length - 1;
   const nextIndex = currIndex + 1;
 
-  if (nextIndex > maxIndex) {
-    return 0;
-  } else {
-    return nextIndex;
-  }
+  if (nextIndex > maxIndex) return 0;
+
+  return nextIndex;
 }
 
 function getPrevIndex(currentIndex: number, length: number) {
   const prevIndex = currentIndex - 1;
 
-  if (prevIndex < 0) {
-    return length - 1;
-  } else {
-    return prevIndex;
-  }
+  if (prevIndex < 0) return length - 1;
+
+  return prevIndex;
 }
 
 function getNewIndex(
@@ -93,18 +83,28 @@ function SliderComponent({
   onScroll?: (index: number) => void
 }, ref: Ref<Api>) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isScrolling, setIsScrolling] = useState(false);
   const scrollView = useRef<ScrollView>(null);
   const items = React.Children.toArray(children);
   const totalItems = items.length;
 
+  const scrollTo = (x: number) => {
+    if (isScrolling) return;
+
+    setIsScrolling(true);
+    scrollView.current?.scrollTo({x});
+  }
+
   useImperativeHandle(ref, () => ({
     next: () => {
-      scrollView.current?.scrollToEnd()
+      scrollTo(width * 2);
     },
     prev: () => {
-      scrollView.current?.scrollTo({x: 0})
+      scrollTo(0);
     }
-  }))
+  }));
+
+  const onScrollStart = () => setIsScrolling(true);
 
   const onScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const index = event.nativeEvent.contentOffset.x / width;
@@ -116,15 +116,16 @@ function SliderComponent({
 
     setCurrentIndex(newIndex);
     scrollView.current?.scrollTo({ x: width * 1, animated: false });
+    setIsScrolling(false);
 
-    onScroll(newIndex)
+    onScroll(newIndex);
   };
 
-  const prevItem = items[getPrevIndex(currentIndex, totalItems)];
-  const currItem = items[currentIndex];
-  const nextItem = items[getNextIndex(currentIndex, totalItems)];
-
-  const itemsToRender = [prevItem, currItem, nextItem];
+  const itemsToRender = [
+    items[getPrevIndex(currentIndex, totalItems)],
+    items[currentIndex],
+    items[getNextIndex(currentIndex, totalItems)]
+  ];
 
   return (
     <View style={{ width, height }}>
@@ -133,6 +134,7 @@ function SliderComponent({
         pagingEnabled
         bounces={false}
         ref={scrollView}
+        onMomentumScrollBegin={onScrollStart}
         onMomentumScrollEnd={onScrollEnd}
         horizontal
         alwaysBounceHorizontal={false}
@@ -163,9 +165,6 @@ export default function App() {
 
   const [index, setIndex] = useState(0);
   const slider = useRef<Api>(null);
-
-
-
 
   return (
     <View style={styles.container}>
