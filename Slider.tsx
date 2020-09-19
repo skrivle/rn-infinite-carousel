@@ -98,7 +98,7 @@ function SliderComponent(
     const newIndex = getNewIndex(currentIndex, totalItems, direction);
 
     setCurrentIndex(newIndex);
-    scrollView.current?.scrollTo({ x: width * 1, animated: false });
+    scrollView.current?.scrollTo({ x: width, animated: false });
     setIsScrolling(false);
 
     onScroll(newIndex);
