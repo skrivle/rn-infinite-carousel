@@ -1,7 +1,7 @@
 {
   "name": "rn-infinite-carousel",
   "main": "dist/index.js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Jelle Versele",
   "license": "MIT",
   "types": "dist/index.d.ts",
