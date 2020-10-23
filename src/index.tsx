@@ -1,38 +1,6 @@
 import React, { ReactNode, useState, useRef, Ref, useImperativeHandle, forwardRef } from 'react';
 import { ScrollView, NativeSyntheticEvent, NativeScrollEvent, View } from 'react-native';
 
-function getDirection(index: number): 'next' | 'prev' | 'none' {
-    if (index > 1) return 'next';
-    if (index < 1) return 'prev';
-    return 'none';
-}
-
-function getNextIndex(currIndex: number, length: number): number {
-    const maxIndex = length - 1;
-    const nextIndex = currIndex + 1;
-
-    if (nextIndex > maxIndex) return 0;
-
-    return nextIndex;
-}
-
-function getPrevIndex(currentIndex: number, length: number) {
-    const prevIndex = currentIndex - 1;
-
-    if (prevIndex < 0) return length - 1;
-
-    return prevIndex;
-}
-
-function getNewIndex(currentIndex: number, length: number, direction: 'next' | 'prev'): number {
-    switch (direction) {
-        case 'next':
-            return getNextIndex(currentIndex, length);
-        case 'prev':
-            return getPrevIndex(currentIndex, length);
-    }
-}
-
 export type SliderAPI = {
     next: () => void;
     prev: () => void;
@@ -108,22 +76,67 @@ function SliderComponent(
                 showsHorizontalScrollIndicator={false}
             >
                 {itemsToRender.map((item, i) => (
-                    <View
-                        key={i}
-                        style={{
-                            width,
-                            height,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            overflow: 'hidden',
-                        }}
-                    >
+                    <Slide key={i} width={width} height={height}>
                         {item}
-                    </View>
+                    </Slide>
                 ))}
             </ScrollView>
         </View>
     );
+}
+
+type SlideProps = {
+    width: number;
+    height: number;
+    children: ReactNode;
+};
+
+function Slide({ width, height, children }: SlideProps) {
+    return (
+        <View
+            style={{
+                width,
+                height,
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+            }}
+        >
+            {children}
+        </View>
+    );
+}
+
+function getDirection(index: number): 'next' | 'prev' | 'none' {
+    if (index > 1) return 'next';
+    if (index < 1) return 'prev';
+    return 'none';
+}
+
+function getNextIndex(currIndex: number, length: number): number {
+    const maxIndex = length - 1;
+    const nextIndex = currIndex + 1;
+
+    if (nextIndex > maxIndex) return 0;
+
+    return nextIndex;
+}
+
+function getPrevIndex(currentIndex: number, length: number) {
+    const prevIndex = currentIndex - 1;
+
+    if (prevIndex < 0) return length - 1;
+
+    return prevIndex;
+}
+
+function getNewIndex(currentIndex: number, length: number, direction: 'next' | 'prev'): number {
+    switch (direction) {
+        case 'next':
+            return getNextIndex(currentIndex, length);
+        case 'prev':
+            return getPrevIndex(currentIndex, length);
+    }
 }
 
 export const Slider = forwardRef(SliderComponent);
