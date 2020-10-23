@@ -1,18 +1,15 @@
 {
   "name": "rn-infinite-carousel",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
   "version": "0.0.4",
   "author": "Jelle Versele",
   "license": "MIT",
-  "types": "dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
     "build": "tsc --declaration",
     "prepublish": "npm run build"
   },
-  "files": [
-    "./dist/*"
-  ],
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
