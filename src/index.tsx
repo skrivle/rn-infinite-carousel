@@ -1,4 +1,12 @@
-import React, { ReactNode, useState, useRef, Ref, useImperativeHandle, forwardRef } from 'react';
+import React, {
+    Children,
+    ReactNode,
+    useState,
+    useRef,
+    Ref,
+    useImperativeHandle,
+    forwardRef,
+} from 'react';
 import { ScrollView, NativeSyntheticEvent, NativeScrollEvent, View } from 'react-native';
 
 export type SliderAPI = {
@@ -20,7 +28,7 @@ function SliderComponent(
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isScrolling, setIsScrolling] = useState(false);
     const scrollView = useRef<ScrollView>(null);
-    const items = React.Children.toArray(children);
+    const items = Children.toArray(children);
     const totalItems = items.length;
 
     const scrollTo = (x: number) => {
