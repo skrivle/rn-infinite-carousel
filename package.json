@@ -10,9 +10,6 @@
     "build": "rimraf ./dist && tsc --declaration",
     "prepublish": "npm run build"
   },
-  "files": [
-    "./dist"
-  ],
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
