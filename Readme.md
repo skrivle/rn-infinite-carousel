@@ -9,6 +9,10 @@ npm i rn-infinite-carousel --save
 ## Usage
 
 ```typescript
+import React from 'react';
+import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import { Slider } from 'rn-infinite-carousel';
+
 function Slide({ text, color }) {
     return (
         <View style={{ ...styles.slide, backgroundColor: color }}>
