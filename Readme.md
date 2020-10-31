@@ -12,7 +12,7 @@ npm i rn-infinite-carousel --save
 function Slide({ text, color }) {
     return (
         <View style={{ ...styles.slide, backgroundColor: color }}>
-            <Text style={{ color: 'white' }}>{text}</Text>
+            <Text style={styles.text}>{text}</Text>
         </View>
     );
 }
