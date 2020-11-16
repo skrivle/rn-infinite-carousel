@@ -1,4 +1,4 @@
-# RN Infinite Carousel
+# React Native Infinite Carousel
 
 ## Installation
 
